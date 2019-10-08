@@ -1,4 +1,4 @@
-interface IGameElement {
+interface DrobableElement {
   /**
    * Drop elem by one cell.
    */
