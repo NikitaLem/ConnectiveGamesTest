@@ -1,14 +1,19 @@
 import GameSceen from "../GameObjects/GameSceen/GameSceen";
-import GameMap from "../Infrastructure/GameMap/GameMap";
+import GameModel from "../Infrastructure/GameModel/GameModel";
+import IGameModelElement from "../Infrastructure/GameModel/IGameModelElement";
+import EventsController from "../EventsController/EventsController";
 
 export default class GameApplication extends PIXI.Application {
   public gameSceen: GameSceen;
-  public gameMap: GameMap;
+  public gameModel: GameModel;
+  public eventsController: EventsController;
   
   constructor(options: PIXI.ApplicationOptions) {
     super(options);
-    this.gameMap = new GameMap();
-    this.gameSceen = this.createSceen(this.gameMap.map);
+    this.eventsController = new EventsController(this);
+    this.gameModel = this.createGameModel();
+    this.gameSceen = this.createSceen(this.gameModel.generateGameMap());
+
     // this.resize();
   }
 
@@ -16,10 +21,15 @@ export default class GameApplication extends PIXI.Application {
     this.renderer.resize(window.innerWidth, window.innerHeight);
   }
 
-  private createSceen(gameMap: number[][]) {
-    const sceen = new GameSceen(this, gameMap);
+  private createSceen(gameModel: IGameModelElement[][]) {
+    const sceen = new GameSceen(this, gameModel);
     sceen.createReels();
     this.stage.addChild(sceen);
     return sceen;
+  }
+
+  private createGameModel(): GameModel {
+    const gameModel = new GameModel(this);
+    return gameModel;
   }
 };

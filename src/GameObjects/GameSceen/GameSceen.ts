@@ -1,23 +1,22 @@
 import GameApplication from "../../GameApplication/GameApplication";
 import GameReel from "../GameReel/GameReel";
 import gameConfig from "../../config/game.config";
+import IGameModelElement from "../../Infrastructure/GameModel/IGameModelElement";
 
 export default class GameSceen extends PIXI.Container {
   private _reelsCount: number;
   private _reelWidth: number;
-  private _gameMap: number[][];
+  private _gameMap: IGameModelElement[][];
 
   public app: GameApplication;
   public reels: GameReel[];
 
-  constructor(app: GameApplication, gameMap: number[][]) {
+  constructor(app: GameApplication, gameMap: IGameModelElement[][]) {
     super();
     this.app = app;
     this._reelsCount = gameConfig.reelsCount;
     this._reelWidth = gameConfig.reelWidth;
     this._gameMap = gameMap;
-    this.width = app.view.width;
-    this.height = app.view.height;
   }
 
   get reelsCount(): number {
