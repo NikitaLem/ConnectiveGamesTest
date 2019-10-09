@@ -5,4 +5,5 @@ export default interface IGameConfig {
   rowsCount?: number,
   colorsTypesCount?: number,
   elemSize?: number,
+  textFillColor?: number | string,
 }

@@ -18,7 +18,7 @@ export default class GameElement extends PIXI.Sprite implements DrobableElement 
     this._state = value;
   }
 
-  public drop() {
-    this.y -= gameConfig.rowHeight;
+  public drop(steps: number = 1) {
+    this.y -= steps * gameConfig.rowHeight;
   }
 };

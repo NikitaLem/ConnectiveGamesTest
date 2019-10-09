@@ -3,13 +3,9 @@ import gameConfig from "../../config/game.config";
 import IGameModelElement from "./IGameModelElement";
 import States from "./ElementStates";
 import GameApplication from "../../GameApplication/GameApplication";
+import EventsList from "../../EventsController/EventsList";
 
 export default class GameModel {
-  public static MODEL_CHANGED = 'game-model-changed';
-  public static WINS_FINDED = 'game-wins-finded';
-  public static NO_WINS_FINDED = 'game-no-wins-finded';
-  public static WINS_CLEARED = 'game-wins-cleared';
-
   private _map: IGameModelElement[][];
   
   public app: GameApplication;
@@ -32,21 +28,15 @@ export default class GameModel {
       return { color: value, state: States.Base };
     }));
 
-    for (let i = 0, len = gameMap.length; i < len; i++) {
-      for (let j = 0, innerArrLen = gameMap[i].length; j < innerArrLen; j++) {
-        if (!gameMap[i] || !gameMap[i][j] || gameMap[i][j].state !== States.Win)
-          this.setState(gameMap, i, j);
-      }
-    }
-
+    this.setStatesToAll(gameMap);
     this.map = gameMap;
-    // this.app.stage.emit(GameModel.MODEL_CHANGED);
+    // this.app.stage.emit(EventList.MODEL_CHANGED);
     return gameMap;
   }
 
   public findWins() {
     const winsExist = this.map.some(innerArr => innerArr.some(elem => elem.state === 2));
-    const event = winsExist ? GameModel.WINS_FINDED : GameModel.NO_WINS_FINDED;
+    const event = winsExist ? EventsList.WINS_FINDED : EventsList.NO_WINS_FINDED;
     this.app.stage.emit(event);
   }
 
@@ -62,7 +52,46 @@ export default class GameModel {
       }
     }
 
-    this.app.stage.emit(GameModel.WINS_CLEARED, winCount);
+    this.app.stage.emit(EventsList.WINS_CLEARED, winCount);
+  }
+
+  public fillNulls() {
+    for (let i = 0, len = this.map.length; i < len; i++) {
+      for (let j = 0, innerArrLen = this.map[i].length; j < innerArrLen; j++) {
+        if (!this.map[i][j]) {
+          this.propogateElem(this.map[i], this.map[i][j]);
+        }
+      }
+    }
+
+    this.setStatesToAll(this.map);
+    this.app.stage.emit(EventsList.NULLS_FILLED);
+  }
+
+  private propogateElem(arr: IGameModelElement[], elem: IGameModelElement | null) {
+    let currentIndex = arr.indexOf(elem);
+    let nextIndex = currentIndex - 1;
+
+    for (nextIndex; nextIndex >= 0; nextIndex--, currentIndex--) {
+      const temp = arr[nextIndex];
+      arr[currentIndex] = temp;
+      arr[nextIndex] = elem;
+    }
+
+    const newElem: IGameModelElement = {
+      color: RandomGenerator.minmax(gameConfig.colorsTypesCount),
+      state: States.Base,
+    };
+    arr[nextIndex + 1] = newElem;
+  }
+
+  private setStatesToAll(gameMap: IGameModelElement[][]) {
+    for (let i = 0, len = gameMap.length; i < len; i++) {
+      for (let j = 0, innerArrLen = gameMap[i].length; j < innerArrLen; j++) {
+        if (!gameMap[i] || !gameMap[i][j] || gameMap[i][j].state !== States.Win)
+          this.setState(gameMap, i, j);
+      }
+    }
   }
 
   private setState(gameMap: IGameModelElement[][], i: number, j: number) {

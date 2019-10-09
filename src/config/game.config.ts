@@ -8,6 +8,7 @@ const gameConfig = {
   colorsTypesCount: colorsMap.size,
   elemSize: 120,
   shape: 'circle',
+  textFillColor: 0xFFFFFF,
 };
 
 export default gameConfig;
