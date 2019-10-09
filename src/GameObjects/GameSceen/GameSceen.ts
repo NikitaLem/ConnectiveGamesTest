@@ -4,6 +4,8 @@ import gameConfig from "../../config/game.config";
 import IGameModelElement from "../../Infrastructure/GameModel/IGameModelElement";
 
 export default class GameSceen extends PIXI.Container {
+  public static REELS_SETTED = 'sceen-reels-setted';
+
   private _reelsCount: number;
   private _reelWidth: number;
   private _gameMap: IGameModelElement[][];
@@ -38,6 +40,7 @@ export default class GameSceen extends PIXI.Container {
       reels.push(reel);
     }
 
+    this.app.stage.emit(GameSceen.REELS_SETTED);
     return reels;
   }
 };

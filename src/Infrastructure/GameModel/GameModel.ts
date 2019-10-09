@@ -8,6 +8,7 @@ export default class GameModel {
   public static MODEL_CHANGED = 'game-model-changed';
   public static WINS_FINDED = 'game-wins-finded';
   public static NO_WINS_FINDED = 'game-no-wins-finded';
+  public static WINS_CLEARED = 'game-wins-cleared';
 
   private _map: IGameModelElement[][];
   
@@ -15,7 +16,6 @@ export default class GameModel {
 
   constructor(app: GameApplication) {
     this.app = app;
-    // this._map = this.generateGameMap();
   }
 
   get map(): IGameModelElement[][] {
@@ -40,7 +40,7 @@ export default class GameModel {
     }
 
     this.map = gameMap;
-    this.app.stage.emit(GameModel.MODEL_CHANGED);
+    // this.app.stage.emit(GameModel.MODEL_CHANGED);
     return gameMap;
   }
 
@@ -48,6 +48,21 @@ export default class GameModel {
     const winsExist = this.map.some(innerArr => innerArr.some(elem => elem.state === 2));
     const event = winsExist ? GameModel.WINS_FINDED : GameModel.NO_WINS_FINDED;
     this.app.stage.emit(event);
+  }
+
+  public clearWins() {
+    let winCount: number = 0;
+    
+    for (let i = 0, len = this.map.length; i < len; i++) {
+      for (let j = 0, innerArrLen = this.map[i].length; j < innerArrLen; j++) {
+        if (this.map[i][j].state === States.Win) {
+          winCount++;
+          this.map[i][j] = null;
+        }
+      }
+    }
+
+    this.app.stage.emit(GameModel.WINS_CLEARED, winCount);
   }
 
   private setState(gameMap: IGameModelElement[][], i: number, j: number) {
