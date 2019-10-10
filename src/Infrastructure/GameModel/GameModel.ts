@@ -103,9 +103,20 @@ export default class GameModel {
     });
 
     if (isAnyActiveElem) {
+      this.map[col][row].state = States.Selected;
       this.selectedElemCoords = { x: col, y: row };
       this.app.stage.emit(EventsList.ELEMS_ACTIVATED);
     }
+  }
+
+  public resetActiveElems() {
+    for (let i = 0, len = this.map.length; i < len; i++) {
+      for (let j = 0, innerArrLen = this.map[i].length; j < innerArrLen; j++) {
+        this.map[i][j].state = States.Base;
+      }
+    }
+
+    this.app.stage.emit(EventsList.ELEMS_ACTIVE_RESETED);
   }
 
   public swap(x: number, y: number) {
@@ -116,6 +127,11 @@ export default class GameModel {
     
     this.app.stage.emit(EventsList.ELEMS_SWAP_END);
     this.selectedElemCoords = null;
+  }
+
+  public randomMap() {
+    this.generateGameMap();
+    this.app.stage.emit(EventsList.RANDOM_GENERATED)
   }
 
   private isElemExist(i: number, j: number): boolean {

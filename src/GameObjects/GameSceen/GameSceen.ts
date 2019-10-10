@@ -18,6 +18,21 @@ export default class GameSceen extends PIXI.Container {
     this._reelsCount = gameConfig.reelsCount;
     this._reelWidth = gameConfig.reelWidth;
     this._gameMap = gameMap;
+    
+    const gr = new PIXI.Graphics();
+    gr.beginFill(0x338833);
+    gr.drawRoundedRect(
+      0, 
+      0, 
+      gameConfig.reelWidth * gameConfig.reelsCount, 
+      gameConfig.rowHeight * gameConfig.rowsCount,
+      5
+    );
+    gr.lineStyle(0);
+    gr.endFill();
+    
+    const background = new PIXI.Sprite(app.renderer.generateTexture(gr));
+    this.addChild(background);
     this.reels = this.createReels();
   }
 
@@ -31,7 +46,6 @@ export default class GameSceen extends PIXI.Container {
 
   private createReels() {
     const reels: GameReel[] = [];
-    let reelsCount: number = 0;
 
     for (let i = 0; i < this.reelsCount; i++) {
       const reel = new GameReel(this.app, i);
@@ -63,7 +77,9 @@ export default class GameSceen extends PIXI.Container {
       reel.updateElems(gameModel[i]);
     });
 
-    // this.app.stage.emit(EventsList.REELS_SETTED);
+    // setTimeout(() => {
+    //   this.app.stage.emit(EventsList.REELS_SETTED);
+    // }, 200);
   }
 
   public onElemsActivated(gameModel: IGameModelElement[][]) {
@@ -72,9 +88,11 @@ export default class GameSceen extends PIXI.Container {
     });
   }
 
-  public onSwap(gameModel: IGameModelElement[][]) {
+  public reset(gameModel: IGameModelElement[][]) {
     this.reels.forEach((reel, i) => {
-      reel.deactivate();
+      reel.resetElems(gameModel[i]);
     });
+
+    this.app.stage.emit(EventsList.REELS_SETTED);
   }
 };

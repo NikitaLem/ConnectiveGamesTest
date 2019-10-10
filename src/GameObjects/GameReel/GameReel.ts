@@ -7,6 +7,8 @@ import States from "../../Infrastructure/GameModel/ElementStates";
 import EventsList from "../../Events/EventsList";
 
 export default class GameReel extends PIXI.Container {
+  private static TOP_PADDING = 14;
+
   private _nullsCount: number = 0;
   private _columnNumber: number;
   private elementBuilder: ElementBuilder;
@@ -19,6 +21,22 @@ export default class GameReel extends PIXI.Container {
     this.app = app;
     this._columnNumber = columnNumber;
     this.elementBuilder = new ElementBuilder(this.app);
+
+    const gr = new PIXI.Graphics();
+    gr.beginFill(0x000000, 0);
+    gr.drawRect(0, 0, gameConfig.reelWidth, gameConfig.rowHeight * gameConfig.rowsCount);
+    gr.lineStyle(0);
+    gr.endFill();
+
+    const background = new PIXI.Sprite(app.renderer.generateTexture(gr));
+    this.addChild(background);
+
+    const mask = new PIXI.Graphics();
+    mask.beginFill(0x0, 1);
+    mask.drawRect(0, 0, gameConfig.reelWidth, gameConfig.rowHeight * gameConfig.rowsCount);
+    mask.endFill();
+    this.addChild(mask);
+    this.mask = mask;
   }
 
   public fillWithElems(gameMapReel: IGameModelElement[]): GameElement[] {
@@ -72,16 +90,17 @@ export default class GameReel extends PIXI.Container {
     gameMap.forEach((elem, i) => {
       if (elem.state === States.Active) {
         this.elements[i].activate();
+      } else if (elem.state === States.Selected) {
+        this.elements[i].state = elem.state;
       } else {
         this.elements[i].disable();
       }
     });
   }
 
-  public onSwap(elem: IGameModelElement, index: number) {
-    this.elements[index].destroy;
-    this.elements.splice(index, 1);
-    this.elements[index] = this.createElement(elem, index, index);
+  public resetElems(elems: IGameModelElement[]) {
+    this.destroyAllElements();
+    this.elements = this.fillWithElems(elems);
   }
 
   public deactivate() {
@@ -96,8 +115,9 @@ export default class GameReel extends PIXI.Container {
   }
 
   private createElement(gameMapElem: IGameModelElement, steps: number, rowNum: number): GameElement {
-    const element = this.elementBuilder.createElement(gameMapElem, this._columnNumber, rowNum);    
-    element.y = gameConfig.rowHeight * steps;
+    const element = this.elementBuilder.createElement(gameMapElem, this._columnNumber, rowNum);
+    element.x = (this.width - element.width) / 2;
+    element.y = gameConfig.rowHeight * steps + GameReel.TOP_PADDING;
     this.addChild(element);
     return element;
   }

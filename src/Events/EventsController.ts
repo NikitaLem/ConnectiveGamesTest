@@ -37,6 +37,7 @@ export default class EventsController {
 
     this.stage.on(EventsList.WINS_CLEARED, (winCount) => {
       console.log('Wins cleared! Total win: ', winCount);
+      this.app.ui.score.updateScore(winCount);
       this.app.gameSceen.destroyEmptyElems(this.app.gameModel.map);
     });
 
@@ -55,6 +56,16 @@ export default class EventsController {
       this.app.gameModel.setActiveElems(col, row, color);
     });
 
+    this.stage.on(EventsList.ELEM_UNPRESSED, () => {
+      console.log('Elem unpressed!');
+      this.app.gameModel.resetActiveElems();
+    });
+
+    this.stage.on(EventsList.ELEMS_ACTIVE_RESETED, () => {
+      console.log('Elem active reseted!');
+      this.app.gameSceen.reset(this.app.gameModel.map);
+    });
+
     this.stage.on(EventsList.ELEMS_ACTIVATED, () => {
       console.log('Elems activated!');
       this.app.gameSceen.onElemsActivated(this.app.gameModel.map);
@@ -67,7 +78,17 @@ export default class EventsController {
 
     this.stage.on(EventsList.ELEMS_SWAP_END, () => {
       console.log('Elems end swapping!');
-      this.app.gameSceen.onSwap(this.app.gameModel.map);
+      this.app.gameSceen.reset(this.app.gameModel.map);
+    });
+
+    this.stage.on(EventsList.RANDOM_GENERATE, () => {
+      console.log('Generate random map!');
+      this.app.gameModel.randomMap();
+    });
+
+    this.stage.on(EventsList.RANDOM_GENERATE, () => {
+      console.log('Random map generated!');
+      this.app.gameSceen.reset(this.app.gameModel.map);
     });
   }
 };

@@ -23,19 +23,23 @@ export default class GameElement extends PIXI.Sprite implements IGameElement {
     this.enable();
 
     this.on('pointerdown', () => {
-
-      if (this.state !== States.Active) {
-        this.app.stage.emit(EventsList.ELEM_PRESSED, {
-          col: this._columnNumber, 
-          row: this._rowNumber,
-          color: this._color,
-        });
-      } else {
-        this.app.stage.emit(EventsList.ELEMS_SWAP, {
-          col: this._columnNumber, 
-          row: this._rowNumber,
-          color: this._color,
-        });
+      switch (this.state) {
+        case States.Active:
+          this.app.stage.emit(EventsList.ELEMS_SWAP, {
+            col: this._columnNumber, 
+            row: this._rowNumber,
+          });
+          break;
+        case States.Selected:
+          this.app.stage.emit(EventsList.ELEM_UNPRESSED);
+          break;
+        default:
+          this.app.stage.emit(EventsList.ELEM_PRESSED, {
+            col: this._columnNumber, 
+            row: this._rowNumber,
+            color: this._color,
+          });
+          break;    
       }
     });
   }
@@ -79,7 +83,7 @@ export default class GameElement extends PIXI.Sprite implements IGameElement {
     const self = this;
     const fromY = this.y;
     const toY = this.y + steps * gameConfig.rowHeight;
-    TweenMax.fromTo(self, 1, {
+    TweenMax.fromTo(self, .5, {
       y: fromY,
     }, 
     {

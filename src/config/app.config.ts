@@ -3,7 +3,7 @@ const options: PIXI.RendererOptions = {
   height: 600,
   antialias: true, 
   transparent: false,
-  backgroundColor: 0x333377,
+  backgroundColor: 0x454545,
   autoResize: true,
   resolution: devicePixelRatio, 
 };

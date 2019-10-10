@@ -3,6 +3,7 @@ enum States {
   Win,
   Filler,
   Active,
+  Selected,
 };
 
 export default States;

@@ -4,10 +4,17 @@ import gameConfig from "../../config/game.config";
 export default class Button extends PIXI.Sprite {
   private _text: PIXI.Text;
   
-  constructor(app: GameApplication, x: number, y: number, text: string = 'click') {
+  constructor(
+    app: GameApplication, 
+    x: number, 
+    y: number, 
+    text: string = 'click',
+    width: number = 160,
+    height: number = 45,
+  ) {
     super();
 
-    this.texture = this.createTexture(app);
+    this.texture = this.createTexture(app, width, height);
     this.x = x;
     this.y = y;
 
@@ -25,11 +32,11 @@ export default class Button extends PIXI.Sprite {
     this._text.text = text;
   }
 
-  private createTexture(app: GameApplication): PIXI.Texture {
+  private createTexture(app: GameApplication, width: number, height: number): PIXI.Texture {
     const gr = new PIXI.Graphics();  
     gr.beginFill(0x323232);
     gr.lineStyle(0);
-    gr.drawRoundedRect(0, 0, 160, 45, 5);
+    gr.drawRoundedRect(0, 0, width, height, 5);
     gr.endFill();
 
     return app.renderer.generateTexture(gr);
