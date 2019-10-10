@@ -1,15 +1,17 @@
 import GameElement from "../../GameObjects/GameElements/GameElement";
 import gameConfig from "../../config/game.config";
 import GameApplication from "../../GameApplication/GameApplication";
+import IGameModelElement from "../GameModel/IGameModelElement";
+import colorsMap from "../../config/colorsMap";
 
 export default class SqareBuilder {
   private _side: number;
-  private _color: number;
+  private _modelElement: IGameModelElement;
   public app: GameApplication;
   
-  constructor(app: GameApplication, colorNumber: number) {
+  constructor(app: GameApplication, modelElement: IGameModelElement) {
     this._side = gameConfig.elemSize;
-    this._color = colorNumber;
+    this._modelElement = modelElement;
     this.app = app;
   }
 
@@ -17,12 +19,14 @@ export default class SqareBuilder {
     return this._side;
   }
 
-  public create(): GameElement {
+  public create(colNum: number, rowNum: number): GameElement {
+    const fillColor = colorsMap.get(this._modelElement.color);
+
     const gr = new PIXI.Graphics();  
-    gr.beginFill(this._color);
+    gr.beginFill(fillColor);
     gr.lineStyle(0);
     gr.drawRect(0, 0, this.side, this.side);
     gr.endFill();
-    return new GameElement(this.app.renderer.generateTexture(gr));
+    return new GameElement(this.app, this.app.renderer.generateTexture(gr), colNum, rowNum, this._modelElement);
   }
 };

@@ -1,6 +1,6 @@
 import Button from "../Button/Button";
 import GameApplication from "../../GameApplication/GameApplication";
-import EventsList from "../../EventsController/EventsList";
+import EventsList from "../../Events/EventsList";
 
 export default class Ui extends PIXI.Container {
   public startButton: Button;

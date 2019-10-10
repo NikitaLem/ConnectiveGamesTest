@@ -4,7 +4,16 @@ export default class EventsList {
   public static NO_WINS_FINDED = 'game-no-wins-finded';
   public static WINS_CLEARED = 'game-wins-cleared';
   public static NULLS_FILLED = 'game-nulls-filled';
+  public static STATES_SETTED = 'game-states-setted';
+
   public static REELS_SETTED = 'sceen-reels-setted';
   public static ELEMS_DESTROYED = 'sceen-elems-destroyed';
+
   public static ELEMS_SETTED = 'reel-elems-setted';
+  
+  public static ELEM_DROPPED = 'elem-dropped';
+  public static ELEM_PRESSED = 'elem-pressed';
+  public static ELEMS_ACTIVATED = 'elem-activated';
+  public static ELEMS_SWAP = 'elem-swap';
+  public static ELEMS_SWAP_END = 'elem-swap-end';
 };

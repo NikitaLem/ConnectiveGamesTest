@@ -18,6 +18,11 @@ export default class EventsController {
 
     this.stage.on(EventsList.REELS_SETTED, () => {
       console.log('Reels setted!');
+      this.app.gameModel.setStatesToAll(this.app.gameModel.map);
+    });
+
+    this.stage.on(EventsList.STATES_SETTED, () => {
+      console.log('States setted!');
       this.app.gameModel.findWins();
     });
 
@@ -43,6 +48,26 @@ export default class EventsController {
     this.stage.on(EventsList.NULLS_FILLED, () => {
       console.log('Nulls filled!');
       this.app.gameSceen.updateReels(this.app.gameModel.map);
+    });
+
+    this.stage.on(EventsList.ELEM_PRESSED, ({ col, row, color }) => {
+      console.log('Elem pressed!');
+      this.app.gameModel.setActiveElems(col, row, color);
+    });
+
+    this.stage.on(EventsList.ELEMS_ACTIVATED, () => {
+      console.log('Elems activated!');
+      this.app.gameSceen.onElemsActivated(this.app.gameModel.map);
+    });
+
+    this.stage.on(EventsList.ELEMS_SWAP, ({ col, row }) => {
+      console.log('Elems start swapping!');
+      this.app.gameModel.swap(col, row);
+    });
+
+    this.stage.on(EventsList.ELEMS_SWAP_END, () => {
+      console.log('Elems end swapping!');
+      this.app.gameSceen.onSwap(this.app.gameModel.map);
     });
   }
 };

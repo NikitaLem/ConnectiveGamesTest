@@ -3,15 +3,24 @@ import gameConfig from "../../config/game.config";
 import IGameModelElement from "./IGameModelElement";
 import States from "./ElementStates";
 import GameApplication from "../../GameApplication/GameApplication";
-import EventsList from "../../EventsController/EventsList";
+import EventsList from "../../Events/EventsList";
 
 export default class GameModel {
   private _map: IGameModelElement[][];
+  private _selectedElemCoords: { x: number, y: number };
   
   public app: GameApplication;
 
   constructor(app: GameApplication) {
     this.app = app;
+  }
+
+  get selectedElemCoords(): { x: number, y: number } {
+    return this._selectedElemCoords;
+  }
+
+  set selectedElemCoords(value: { x: number, y: number }) {
+    this._selectedElemCoords = value;
   }
 
   get map(): IGameModelElement[][] {
@@ -28,9 +37,7 @@ export default class GameModel {
       return { color: value, state: States.Base };
     }));
 
-    this.setStatesToAll(gameMap);
     this.map = gameMap;
-    // this.app.stage.emit(EventList.MODEL_CHANGED);
     return gameMap;
   }
 
@@ -64,8 +71,55 @@ export default class GameModel {
       }
     }
 
-    this.setStatesToAll(this.map);
     this.app.stage.emit(EventsList.NULLS_FILLED);
+  }
+
+  public setStatesToAll(gameMap: IGameModelElement[][]) {
+    for (let i = 0, len = gameMap.length; i < len; i++) {
+      for (let j = 0, innerArrLen = gameMap[i].length; j < innerArrLen; j++) {
+        if (!gameMap[i] || !gameMap[i][j] || gameMap[i][j].state !== States.Win)
+          this.setState(gameMap, i, j, gameMap[i][j].color);
+      }
+    }
+
+    this.app.stage.emit(EventsList.STATES_SETTED);
+  }
+
+  public setActiveElems(col: number, row: number, color: number) {
+    const neighborCoords = [
+      { x: col - 1, y: row },
+      { x: col + 1, y: row },
+      { x: col, y: row - 1 },
+      { x: col, y: row + 1 },
+    ];
+
+    let isAnyActiveElem: boolean = false;
+
+    neighborCoords.forEach(({ x, y }) => {
+      if (this.isElemExist(x, y)) {
+        const activeFinded: boolean = this.setState(this.map, x, y, color, States.Active, col, row);
+        if (!isAnyActiveElem) isAnyActiveElem = activeFinded;
+      }
+    });
+
+    if (isAnyActiveElem) {
+      this.selectedElemCoords = { x: col, y: row };
+      this.app.stage.emit(EventsList.ELEMS_ACTIVATED);
+    }
+  }
+
+  public swap(x: number, y: number) {
+    const { x: x0, y: y0 } = this.selectedElemCoords;
+    const temp: IGameModelElement = this.map[x0][y0];
+    this.map[x0][y0] = this.map[x][y];
+    this.map[x][y] = temp;
+    
+    this.app.stage.emit(EventsList.ELEMS_SWAP_END);
+    this.selectedElemCoords = null;
+  }
+
+  private isElemExist(i: number, j: number): boolean {
+    return !!this.map[i] && !!this.map[i][j];
   }
 
   private propogateElem(arr: IGameModelElement[], elem: IGameModelElement | null) {
@@ -73,39 +127,40 @@ export default class GameModel {
     let nextIndex = currentIndex - 1;
 
     for (nextIndex; nextIndex >= 0; nextIndex--, currentIndex--) {
-      const temp = arr[nextIndex];
+      const temp = { color: arr[nextIndex].color, state: States.Filler };
       arr[currentIndex] = temp;
       arr[nextIndex] = elem;
     }
 
     const newElem: IGameModelElement = {
       color: RandomGenerator.minmax(gameConfig.colorsTypesCount),
-      state: States.Base,
+      state: States.Filler,
     };
     arr[nextIndex + 1] = newElem;
   }
 
-  private setStatesToAll(gameMap: IGameModelElement[][]) {
-    for (let i = 0, len = gameMap.length; i < len; i++) {
-      for (let j = 0, innerArrLen = gameMap[i].length; j < innerArrLen; j++) {
-        if (!gameMap[i] || !gameMap[i][j] || gameMap[i][j].state !== States.Win)
-          this.setState(gameMap, i, j);
-      }
-    }
-  }
-
-  private setState(gameMap: IGameModelElement[][], i: number, j: number) {
-    const color = gameMap[i][j].color;
-    const neighborCoords = [
+  private setState(
+    gameMap: IGameModelElement[][], 
+    i: number, 
+    j: number, 
+    color: number, 
+    state: States = States.Win,
+    targetX?: number, 
+    targetY?: number  
+  ): boolean {
+    let neighborCoords = [
       { x: i - 1, y: j },
       { x: i + 1, y: j },
       { x: i, y: j - 1 },
       { x: i, y: j + 1 },
     ];
 
-    gameMap[i][j].state = neighborCoords.some(coords => this.checkElem(color, gameMap, coords.x, coords.y))
-      ? States.Win
-      : States.Base;
+    if (state === States.Active)
+      neighborCoords = [...neighborCoords.filter(({ x, y }) => !(x === targetX && y === targetY))];
+
+    const checkResult = neighborCoords.some(({ x, y }) => this.checkElem(color, gameMap, x, y));
+    gameMap[i][j].state = checkResult ? state : States.Base;
+    return checkResult;
   }
 
   private checkElem(color: number, arr: IGameModelElement[][], x: number, y: number): boolean {

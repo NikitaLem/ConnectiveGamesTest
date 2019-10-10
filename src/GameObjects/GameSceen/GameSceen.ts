@@ -2,7 +2,7 @@ import GameApplication from "../../GameApplication/GameApplication";
 import GameReel from "../GameReel/GameReel";
 import gameConfig from "../../config/game.config";
 import IGameModelElement from "../../Infrastructure/GameModel/IGameModelElement";
-import EventsList from "../../EventsController/EventsList";
+import EventsList from "../../Events/EventsList";
 
 export default class GameSceen extends PIXI.Container {
   private _reelsCount: number;
@@ -34,12 +34,18 @@ export default class GameSceen extends PIXI.Container {
     let reelsCount: number = 0;
 
     for (let i = 0; i < this.reelsCount; i++) {
-      const reel = new GameReel(this.app);
+      const reel = new GameReel(this.app, i);
       reel.x = this.reelWidth * i;
       reel.fillWithElems(this._gameMap[i]);
       this.addChild(reel);
       reels.push(reel);
     }
+
+    reels[0].on(EventsList.ELEMS_SETTED, () => {
+      setTimeout(() => {
+        this.app.stage.emit(EventsList.REELS_SETTED);
+      }, 200);
+    });
 
     return reels;
   }
@@ -58,5 +64,17 @@ export default class GameSceen extends PIXI.Container {
     });
 
     // this.app.stage.emit(EventsList.REELS_SETTED);
+  }
+
+  public onElemsActivated(gameModel: IGameModelElement[][]) {
+    this.reels.forEach((reel, i) => {
+      reel.onElemsActivated(gameModel[i]);
+    });
+  }
+
+  public onSwap(gameModel: IGameModelElement[][]) {
+    this.reels.forEach((reel, i) => {
+      reel.deactivate();
+    });
   }
 };
