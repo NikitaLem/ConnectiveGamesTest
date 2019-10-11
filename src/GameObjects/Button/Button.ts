@@ -24,12 +24,21 @@ export default class Button extends PIXI.Sprite {
     this._text.y = (this.height - this._text.height) / 2;
     this.addChild(this._text);
 
-    this.buttonMode = true;
-    this.interactive = true;
+    this.enable();
   }
 
   public setText(text: string) {
     this._text.text = text;
+  }
+
+  public enable() {
+    this.buttonMode = true;
+    this.interactive = true;
+  }
+
+  public disable() {
+    this.buttonMode = false;
+    this.interactive = false;
   }
 
   private createTexture(app: GameApplication, width: number, height: number): PIXI.Texture {

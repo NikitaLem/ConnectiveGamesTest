@@ -14,6 +14,7 @@ export default class EventsController {
   public registerListeners() {
     this.stage.on(EventsList.GAME_START, () => {
       console.log('Game started!');
+      this.app.gameSceen.enableReels();
       this.app.gameModel.setStatesToAll(this.app.gameModel.map);
       this.app.ui.timer.startCountdown();
     });
@@ -99,6 +100,8 @@ export default class EventsController {
 
     this.stage.on(EventsList.GAME_OVER, () => {
       console.log('Game over!');
+      this.app.gameSceen.onGameOver();
+      this.app.ui.onGameOver();
     });
   }
 };

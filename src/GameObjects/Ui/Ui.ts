@@ -42,6 +42,10 @@ export default class Ui extends PIXI.Container {
     this.addChild(this.timer);
   }
 
+  public onGameOver() {
+    this.randomButton.disable();
+  }
+
   private alignVerticalCenter(elem: PIXI.Sprite | PIXI.Container, container: PIXI.Container) {
     elem.y = (container.height - elem.height) / 2;
   }

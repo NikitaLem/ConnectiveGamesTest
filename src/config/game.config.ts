@@ -9,7 +9,7 @@ const gameConfig = {
   elemSize: 120,
   shape: 'circle',
   textFillColor: 0xFFFFFF,
-  gameTime: 60,
+  gameTime: 30,
 };
 
 export default gameConfig;
