@@ -27,8 +27,6 @@ export default class GameApplication extends PIXI.Application {
 
   public resize() {
     this.renderer.resize(window.innerWidth, window.innerHeight);
-    this.stage.x = (window.innerWidth - this.stage.width) / 2;
-    // this.stage.y = (window.innerHeight - this.stage.height) / 2;
     
     let aspectRatio = 1;
 
@@ -37,8 +35,10 @@ export default class GameApplication extends PIXI.Application {
     } else {
       aspectRatio = window.innerHeight / appConfig.height;
     }
-
+    
     this.stage.scale = new PIXI.Point(aspectRatio, aspectRatio);
+    this.stage.x = (window.innerWidth - this.stage.width) / 2;
+    this.stage.y = (window.innerHeight - this.stage.height) / 2;
   }
 
   private createSceen(gameModel: IGameModelElement[][]) {

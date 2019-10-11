@@ -7,8 +7,9 @@ const gameConfig = {
   rowsCount: 3,
   colorsTypesCount: colorsMap.size,
   elemSize: 120,
-  shape: 'triangle',
+  shape: 'circle',
   textFillColor: 0xFFFFFF,
+  gameTime: 60,
 };
 
 export default gameConfig;

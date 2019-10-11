@@ -20,7 +20,7 @@ export default class GameElement extends PIXI.Sprite implements IGameElement {
     this._rowNumber = rowNum;
     this._state = modelElement.state;
     this._color = modelElement.color;
-    this.enable();
+    this.disable();
 
     this.on('pointerdown', () => {
       switch (this.state) {

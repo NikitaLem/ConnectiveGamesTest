@@ -107,6 +107,14 @@ export default class GameReel extends PIXI.Container {
     this.elements.forEach(elem => elem.deactivate());
   }
 
+  public enable() {
+    this.elements.forEach(elem => elem.enable());
+  }
+
+  public disable() {
+    this.elements.forEach(elem => elem.disable());
+  }
+
   private destroyAllElements() {
     this.elements.forEach(child => {
       if (child) child.destroy();

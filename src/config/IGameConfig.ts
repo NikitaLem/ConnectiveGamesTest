@@ -6,4 +6,5 @@ export default interface IGameConfig {
   colorsTypesCount?: number,
   elemSize?: number,
   textFillColor?: number | string,
+  gameTime?: number,
 }

@@ -22,7 +22,7 @@ export default class StartPanel extends PIXI.Container {
 
     this.startButton = new Button(app, 0, 0, 'Start', 200, 100);
     this.startButton.on('pointerdown', () => {
-      app.stage.emit(EventsList.REELS_SETTED);
+      app.stage.emit(EventsList.GAME_START);
       this.visible = false;
       this.interactive = false;
     });

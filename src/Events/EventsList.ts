@@ -21,4 +21,7 @@ export default class EventsList {
 
   public static RANDOM_GENERATE = 'random-generate';
   public static RANDOM_GENERATED = 'random-generated';
+
+  public static GAME_START = 'game-start';
+  public static GAME_OVER = 'game-over';
 };

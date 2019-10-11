@@ -5,9 +5,8 @@ import IGameModelElement from "../../Infrastructure/GameModel/IGameModelElement"
 import EventsList from "../../Events/EventsList";
 
 export default class GameSceen extends PIXI.Container {
-  private _reelsCount: number;
-  private _reelWidth: number;
   private _gameMap: IGameModelElement[][];
+  private _isOver: boolean = false;
 
   public app: GameApplication;
   public reels: GameReel[];
@@ -15,8 +14,6 @@ export default class GameSceen extends PIXI.Container {
   constructor(app: GameApplication, gameMap: IGameModelElement[][]) {
     super();
     this.app = app;
-    this._reelsCount = gameConfig.reelsCount;
-    this._reelWidth = gameConfig.reelWidth;
     this._gameMap = gameMap;
     
     const gr = new PIXI.Graphics();
@@ -36,20 +33,22 @@ export default class GameSceen extends PIXI.Container {
     this.reels = this.createReels();
   }
 
-  get reelsCount(): number {
-    return this._reelsCount;
+  get isOver(): boolean {
+    return this._isOver;
   }
 
-  get reelWidth(): number {
-    return this._reelWidth;
+  set isOver(value: boolean) {
+    this._isOver = value;
   }
 
   private createReels() {
+    if (this.isOver) return;
+
     const reels: GameReel[] = [];
 
-    for (let i = 0; i < this.reelsCount; i++) {
+    for (let i = 0; i < gameConfig.reelsCount; i++) {
       const reel = new GameReel(this.app, i);
-      reel.x = this.reelWidth * i;
+      reel.x = gameConfig.reelWidth * i;
       reel.fillWithElems(this._gameMap[i]);
       this.addChild(reel);
       reels.push(reel);
@@ -73,6 +72,8 @@ export default class GameSceen extends PIXI.Container {
   }
 
   public updateReels(gameModel: IGameModelElement[][]) {
+    if (this.isOver) return;
+
     this.reels.forEach((reel, i) => {
       reel.updateElems(gameModel[i]);
     });
@@ -89,10 +90,21 @@ export default class GameSceen extends PIXI.Container {
   }
 
   public reset(gameModel: IGameModelElement[][]) {
+    if (this.isOver) return;
+
     this.reels.forEach((reel, i) => {
       reel.resetElems(gameModel[i]);
     });
 
     this.app.stage.emit(EventsList.REELS_SETTED);
+  }
+
+  public enableReels() {
+    this.reels.forEach(reel => reel.enable());
+  }
+
+  public onGameOver() {
+    this.isOver = true;
+    this.reels.forEach(reel => reel.disable());
   }
 };

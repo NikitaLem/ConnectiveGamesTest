@@ -12,13 +12,19 @@ export default class EventsController {
   }
 
   public registerListeners() {
-    this.stage.on(EventsList.MODEL_CHANGED, () => {
-      // this.app.gameModel.findWins();
+    this.stage.on(EventsList.GAME_START, () => {
+      console.log('Game started!');
+      this.app.gameModel.setStatesToAll(this.app.gameModel.map);
+      this.app.ui.timer.startCountdown();
     });
 
     this.stage.on(EventsList.REELS_SETTED, () => {
       console.log('Reels setted!');
       this.app.gameModel.setStatesToAll(this.app.gameModel.map);
+    });
+
+    this.stage.on(EventsList.MODEL_CHANGED, () => {
+      // this.app.gameModel.findWins();
     });
 
     this.stage.on(EventsList.STATES_SETTED, () => {
@@ -89,6 +95,10 @@ export default class EventsController {
     this.stage.on(EventsList.RANDOM_GENERATE, () => {
       console.log('Random map generated!');
       this.app.gameSceen.reset(this.app.gameModel.map);
+    });
+
+    this.stage.on(EventsList.GAME_OVER, () => {
+      console.log('Game over!');
     });
   }
 };
