@@ -7,7 +7,7 @@ const gameConfig = {
   rowsCount: 3,
   colorsTypesCount: colorsMap.size,
   elemSize: 120,
-  shape: 'circle',
+  shape: 'triangle',
   textFillColor: 0xFFFFFF,
 };
 

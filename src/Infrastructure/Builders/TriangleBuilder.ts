@@ -3,15 +3,14 @@ import gameConfig from "../../config/game.config";
 import GameApplication from "../../GameApplication/GameApplication";
 import IGameModelElement from "../GameModel/IGameModelElement";
 import colorsMap from "../../config/colorsMap";
+import IShapeBuilder from "./IShapeBuilder";
 
-export default class TriangleBuilder {
+export default class TriangleBuilder implements IShapeBuilder {
   private _side: number; 
-  private _modelElement: IGameModelElement;
   public app: GameApplication;
   
-  constructor(app: GameApplication, modelElement: IGameModelElement) {
+  constructor(app: GameApplication) {
     this._side = gameConfig.elemSize;
-    this._modelElement = modelElement;
     this.app = app;
   }
 
@@ -19,8 +18,8 @@ export default class TriangleBuilder {
     return this._side;
   }
 
-  public create(colNum: number, rowNum: number): GameElement {
-    const fillColor = colorsMap.get(this._modelElement.color);
+  public create(modelElement: IGameModelElement, colNum: number, rowNum: number): GameElement {
+    const fillColor = colorsMap.get(modelElement.color);
 
     const gr = new PIXI.Graphics();  
     gr.beginFill(fillColor);
@@ -29,6 +28,6 @@ export default class TriangleBuilder {
     gr.lineTo(this.side, this.side); 
     gr.lineTo(0, this.side);
     gr.endFill();
-    return new GameElement(this.app, this.app.renderer.generateTexture(gr), colNum, rowNum, this._modelElement);
+    return new GameElement(this.app, this.app.renderer.generateTexture(gr), colNum, rowNum, modelElement);
   }
 };
